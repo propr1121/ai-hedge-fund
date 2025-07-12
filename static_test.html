@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static Mobile Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin: 0;
+        }
+        .box {
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 400px;
+        }
+        .big-text {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .status {
+            background: #2196F3;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        button {
+            background: #FF9800;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        #time {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <h1>📱 STATIC MOBILE TEST</h1>
+    <div class="big-text">✅ IF YOU SEE THIS, MOBILE CONNECTION WORKS!</div>
+    
+    <div class="box">
+        <h2>🔍 Connection Test</h2>
+        <div class="status">✅ Static HTML Loading: SUCCESS</div>
+        <div class="status">📱 Mobile Browser: WORKING</div>
+        <div class="status">🌐 Network: CONNECTED</div>
+        <div>Current Time: <span id="time">Loading...</span></div>
+    </div>
+
+    <div class="box">
+        <h2>📊 Server Information</h2>
+        <div>IP Address: 172.30.0.2</div>
+        <div>Port: 5000</div>
+        <div>Status: Testing...</div>
+    </div>
+
+    <div class="box">
+        <h2>🚀 Next Steps</h2>
+        <div>1. ✅ This page loads = Network OK</div>
+        <div>2. 📱 Test Flask server next</div>
+        <div>3. 🔧 Run hedge fund analysis</div>
+        <button onclick="testNext()">Test Flask Server</button>
+    </div>
+
+    <div class="box">
+        <h2>🔍 Debug Info</h2>
+        <div>User Agent: <span id="ua">Loading...</span></div>
+        <div>Screen Size: <span id="screen">Loading...</span></div>
+        <div>Timestamp: <span id="timestamp">Loading...</span></div>
+    </div>
+
+    <script>
+        // Update time every second
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('time').textContent = now.toLocaleTimeString();
+            document.getElementById('timestamp').textContent = now.toISOString();
+        }
+        
+        // Get device info
+        function getDeviceInfo() {
+            document.getElementById('ua').textContent = navigator.userAgent.substring(0, 50) + '...';
+            document.getElementById('screen').textContent = screen.width + 'x' + screen.height;
+        }
+        
+        // Test next step
+        function testNext() {
+            alert('If you see this alert, JavaScript is working!\n\nNext: Try accessing the Flask server at:\nhttp://172.30.0.2:5000/test');
+        }
+        
+        // Initialize
+        updateTime();
+        getDeviceInfo();
+        setInterval(updateTime, 1000);
+        
+        // Log success
+        console.log('✅ Static HTML test page loaded successfully');
+    </script>
+</body>
+</html>
