@@ -31,8 +31,8 @@ def parse_hedge_fund_response(response):
 
     try:
         return json.loads(response)
-    except:
-        print(f"Error parsing response: {response}")
+    except (json.JSONDecodeError, TypeError) as e:
+        print(f"Error parsing response: {response}. Error: {e}")
         return None
 
 
@@ -54,7 +54,9 @@ def run_hedge_fund(
             workflow = create_workflow(selected_analysts)
             agent = workflow.compile()
         else:
-            agent = app
+            # Create default workflow with all analysts
+            workflow = create_workflow()
+            agent = workflow.compile()
 
         final_state = agent.invoke(
             {
@@ -135,7 +137,7 @@ if __name__ == "__main__":
         "--initial-cash",
         type=float,
         default=100000.0,
-        help="Initial cash position. Defaults to 100000.0)"
+        help="Initial cash position. Defaults to 100000.0"
     )
     parser.add_argument("--tickers", type=str, required=True, help="Comma-separated list of stock ticker symbols")
     parser.add_argument(
