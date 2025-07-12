@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Hedge Fund</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .card h2 {
+            color: #4a5568;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            transform: scale(1.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(240, 147, 251, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+        }
+
+        .results h3 {
+            color: #4a5568;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 2rem;
+            color: #667eea;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #e2e8f0;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .output {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            border-left: 4px solid #667eea;
+        }
+
+        .error {
+            background: #fed7d7;
+            border-left-color: #f56565;
+            color: #c53030;
+        }
+
+        .success {
+            background: #c6f6d5;
+            border-left-color: #48bb78;
+            color: #2d7738;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-running {
+            background: #fed7ba;
+            color: #c05621;
+        }
+
+        .status-completed {
+            background: #c6f6d5;
+            color: #2d7738;
+        }
+
+        .status-error {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI Hedge Fund</h1>
+            <p>Intelligent trading decisions powered by AI agents</p>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>📊 Hedge Fund Analysis</h2>
+                <form id="analyzeForm">
+                    <div class="form-group">
+                        <label for="tickers">Stock Tickers</label>
+                        <input type="text" id="tickers" name="tickers" value="AAPL,MSFT,NVDA" placeholder="AAPL,MSFT,NVDA">
+                    </div>
+                    <div class="form-group">
+                        <label for="initial_cash">Initial Cash ($)</label>
+                        <input type="number" id="initial_cash" name="initial_cash" value="100000" min="1000" step="1000">
+                    </div>
+                    <div class="form-group">
+                        <label for="start_date">Start Date</label>
+                        <input type="date" id="start_date" name="start_date">
+                    </div>
+                    <div class="form-group">
+                        <label for="end_date">End Date</label>
+                        <input type="date" id="end_date" name="end_date">
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="show_reasoning" name="show_reasoning">
+                            <label for="show_reasoning">Show AI Agent Reasoning</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Run Analysis</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>📈 Backtesting</h2>
+                <form id="backtestForm">
+                    <div class="form-group">
+                        <label for="backtest_tickers">Stock Tickers</label>
+                        <input type="text" id="backtest_tickers" name="tickers" value="AAPL,MSFT,NVDA" placeholder="AAPL,MSFT,NVDA">
+                    </div>
+                    <div class="form-group">
+                        <label for="backtest_start_date">Start Date</label>
+                        <input type="date" id="backtest_start_date" name="start_date">
+                    </div>
+                    <div class="form-group">
+                        <label for="backtest_end_date">End Date</label>
+                        <input type="date" id="backtest_end_date" name="end_date">
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Run Backtest</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="results" class="results" style="display: none;">
+            <h3>Results</h3>
+            <div id="status"></div>
+            <div id="output"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentJobId = null;
+        let pollInterval = null;
+
+        // Set default dates
+        const today = new Date();
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(today.getMonth() - 3);
+
+        document.getElementById('end_date').value = today.toISOString().split('T')[0];
+        document.getElementById('start_date').value = threeMonthsAgo.toISOString().split('T')[0];
+        document.getElementById('backtest_end_date').value = today.toISOString().split('T')[0];
+        document.getElementById('backtest_start_date').value = threeMonthsAgo.toISOString().split('T')[0];
+
+        function showResults() {
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function setStatus(text, className = '') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<span class="status-badge ${className}">${text}</span>`;
+        }
+
+        function setOutput(content, isError = false) {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = `<div class="output ${isError ? 'error' : 'success'}">${content}</div>`;
+        }
+
+        function setLoading(message) {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <span>${message}</span>
+                </div>
+            `;
+        }
+
+        function disableAllButtons() {
+            document.querySelectorAll('.btn').forEach(btn => btn.disabled = true);
+        }
+
+        function enableAllButtons() {
+            document.querySelectorAll('.btn').forEach(btn => btn.disabled = false);
+        }
+
+        function pollJobStatus(jobId) {
+            pollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/job/${jobId}`);
+                    const data = await response.json();
+
+                    if (data.status === 'running') {
+                        setStatus('Running...', 'status-running');
+                        return;
+                    }
+
+                    clearInterval(pollInterval);
+                    enableAllButtons();
+
+                    if (data.status === 'completed') {
+                        setStatus('Completed', 'status-completed');
+                        if (data.success) {
+                            setOutput(data.output, false);
+                        } else {
+                            setOutput(data.error || 'Unknown error occurred', true);
+                        }
+                    } else if (data.status === 'timeout') {
+                        setStatus('Timeout', 'status-error');
+                        setOutput('The operation timed out after 5 minutes', true);
+                    } else if (data.status === 'error') {
+                        setStatus('Error', 'status-error');
+                        setOutput(data.error || 'Unknown error occurred', true);
+                    } else {
+                        setStatus('Unknown Status', 'status-error');
+                        setOutput('Unknown status received', true);
+                    }
+                } catch (error) {
+                    clearInterval(pollInterval);
+                    enableAllButtons();
+                    setStatus('Error', 'status-error');
+                    setOutput(`Network error: ${error.message}`, true);
+                }
+            }, 2000);
+        }
+
+        document.getElementById('analyzeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                tickers: formData.get('tickers'),
+                initial_cash: formData.get('initial_cash'),
+                start_date: formData.get('start_date'),
+                end_date: formData.get('end_date'),
+                show_reasoning: formData.get('show_reasoning') === 'on'
+            };
+
+            showResults();
+            setLoading('Starting hedge fund analysis...');
+            disableAllButtons();
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+                currentJobId = result.job_id;
+                pollJobStatus(currentJobId);
+            } catch (error) {
+                enableAllButtons();
+                setStatus('Error', 'status-error');
+                setOutput(`Failed to start analysis: ${error.message}`, true);
+            }
+        });
+
+        document.getElementById('backtestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                tickers: formData.get('tickers'),
+                start_date: formData.get('start_date'),
+                end_date: formData.get('end_date')
+            };
+
+            showResults();
+            setLoading('Starting backtesting...');
+            disableAllButtons();
+
+            try {
+                const response = await fetch('/backtest', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+                currentJobId = result.job_id;
+                pollJobStatus(currentJobId);
+            } catch (error) {
+                enableAllButtons();
+                setStatus('Error', 'status-error');
+                setOutput(`Failed to start backtest: ${error.message}`, true);
+            }
+        });
+    </script>
+</body>
+</html>
