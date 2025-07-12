@@ -91,8 +91,8 @@ class Backtester:
 
             decision = json.loads(agent_output)
             return decision
-        except:
-            print(f"Error parsing action: {agent_output}")
+        except (json.JSONDecodeError, TypeError) as e:
+            print(f"Error parsing action: {agent_output}. Error: {e}")
             return "hold", 0
 
     def execute_trade(self, ticker: str, action: str, quantity: float, current_price: float):
@@ -360,8 +360,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Parse tickers from comma-separated string
-    # tickers = [ticker.strip() for ticker in args.tickers.split(",")]
-    tickers = ["AAPL"]
+    if args.tickers:
+        tickers = [ticker.strip() for ticker in args.tickers.split(",")]
+    else:
+        tickers = ["AAPL"]  # Default fallback
     selected_analysts = None
     choices = questionary.checkbox(
         "Use the Space bar to select/unselect analysts.",
