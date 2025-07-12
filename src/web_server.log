@@ -9,5 +9,7 @@ Press CTRL+C to quit
  * Restarting with stat
  * Debugger is active!
  * Debugger PIN: 949-629-046
-172.30.0.2 - - [12/Jul/2025 08:11:12] "GET /health HTTP/1.1" 200 -
-172.30.0.2 - - [12/Jul/2025 08:12:00] "GET / HTTP/1.1" 200 -
+172.30.0.2 - - [12/Jul/2025 08:18:19] "GET /test HTTP/1.1" 200 -
+172.30.0.2 - - [12/Jul/2025 08:19:09] "GET /health HTTP/1.1" 200 -
+172.30.0.2 - - [12/Jul/2025 08:19:09] "GET /test HTTP/1.1" 200 -
+172.30.0.2 - - [12/Jul/2025 08:19:09] "GET /mobile HTTP/1.1" 200 -

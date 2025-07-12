@@ -16,6 +16,14 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+@app.route('/mobile')
+def mobile():
+    return render_template('mobile.html')
+
+@app.route('/test')
+def test():
+    return render_template('test.html')
+
 @app.route('/api/analyze', methods=['POST'])
 def analyze():
     try:

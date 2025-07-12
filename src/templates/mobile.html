@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Hedge Fund - Mobile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            -webkit-appearance: none;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 18px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .results {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid #dee2e6;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .decision {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+        }
+
+        .decision h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .decision-detail {
+            margin: 5px 0;
+        }
+
+        .decision-detail strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="status" id="status">🟢 Connected</div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🏦 AI Hedge Fund</h1>
+            <p>Mobile Trading Analysis</p>
+        </div>
+
+        <div class="card">
+            <h2>📊 Stock Analysis</h2>
+            <form id="analysis-form">
+                <div class="form-group">
+                    <label for="tickers">Stock Tickers (comma-separated):</label>
+                    <input type="text" id="tickers" name="tickers" placeholder="AAPL,MSFT,GOOGL" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="initial_cash">Initial Cash ($):</label>
+                    <input type="number" id="initial_cash" name="initial_cash" value="100000" min="1000" step="1000">
+                </div>
+
+                <button type="submit" class="btn" id="analyze-btn">
+                    🚀 Analyze Stocks
+                </button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>📈 Results</h2>
+            <div id="results">
+                <p>Enter stock tickers above and click "Analyze Stocks" to get AI-powered trading recommendations.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple mobile-friendly JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Mobile interface loaded');
+            
+            // Set default dates
+            const today = new Date();
+            const threeMonthsAgo = new Date();
+            threeMonthsAgo.setMonth(today.getMonth() - 3);
+            
+            // Check server connection
+            fetch('/health')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('status').textContent = '🟢 Connected';
+                    document.getElementById('status').style.background = '#4CAF50';
+                })
+                .catch(error => {
+                    document.getElementById('status').textContent = '🔴 Error';
+                    document.getElementById('status').style.background = '#f44336';
+                });
+        });
+
+        document.getElementById('analysis-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const tickers = document.getElementById('tickers').value;
+            const initialCash = document.getElementById('initial_cash').value;
+            
+            if (!tickers) {
+                showError('Please enter at least one ticker symbol');
+                return;
+            }
+            
+            // Show loading
+            showLoading();
+            
+            // Prepare data
+            const today = new Date().toISOString().split('T')[0];
+            const threeMonthsAgo = new Date();
+            threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+            const startDate = threeMonthsAgo.toISOString().split('T')[0];
+            
+            const data = {
+                tickers: tickers,
+                initial_cash: parseFloat(initialCash),
+                start_date: startDate,
+                end_date: today,
+                show_reasoning: false,
+                selected_analysts: ['technical_analyst', 'fundamentals_analyst']
+            };
+            
+            // Send request
+            fetch('/api/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showResults(result);
+                } else {
+                    showError(result.error || 'Analysis failed');
+                }
+            })
+            .catch(error => {
+                showError('Network error: ' + error.message);
+            });
+        });
+
+        function showLoading() {
+            document.getElementById('analyze-btn').disabled = true;
+            document.getElementById('analyze-btn').textContent = 'Analyzing...';
+            
+            document.getElementById('results').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>AI is analyzing your stocks...</p>
+                </div>
+            `;
+        }
+
+        function showResults(result) {
+            document.getElementById('analyze-btn').disabled = false;
+            document.getElementById('analyze-btn').textContent = '🚀 Analyze Stocks';
+            
+            const decisions = result.result.decisions;
+            
+            if (!decisions || !decisions.decisions) {
+                showError('No trading decisions returned');
+                return;
+            }
+
+            let html = '<div class="success">✅ Analysis completed!</div>';
+            
+            decisions.decisions.forEach(decision => {
+                html += `
+                    <div class="decision">
+                        <h3>📊 ${decision.ticker}</h3>
+                        <div class="decision-detail"><strong>Action:</strong> ${decision.action}</div>
+                        <div class="decision-detail"><strong>Quantity:</strong> ${decision.quantity}</div>
+                        <div class="decision-detail"><strong>Price:</strong> $${decision.price}</div>
+                        <div class="decision-detail"><strong>Confidence:</strong> ${decision.confidence}</div>
+                        <div class="decision-detail"><strong>Reasoning:</strong> ${decision.reasoning}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('results').innerHTML = html;
+        }
+
+        function showError(message) {
+            document.getElementById('analyze-btn').disabled = false;
+            document.getElementById('analyze-btn').textContent = '🚀 Analyze Stocks';
+            
+            document.getElementById('results').innerHTML = `
+                <div class="error">
+                    ❌ Error: ${message}
+                </div>
+                <p style="margin-top: 10px;">Please try again or check your internet connection.</p>
+            `;
+        }
+    </script>
+</body>
+</html>
