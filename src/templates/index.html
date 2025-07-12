@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Hedge Fund - Trading Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .form-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+            width: 100%;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            min-height: 400px;
+        }
+
+        .results-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .decision-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .decision-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .decision-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .decision-details div {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .decision-details strong {
+            color: #555;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .decision-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏦 AI Hedge Fund</h1>
+            <p>Intelligent Trading Analysis powered by AI Agents</p>
+        </div>
+
+        <div class="main-content">
+            <div class="form-section">
+                <h2>📊 Analysis Parameters</h2>
+                <form id="analysis-form">
+                    <div class="form-group">
+                        <label for="tickers">Stock Tickers (comma-separated):</label>
+                        <input type="text" id="tickers" name="tickers" 
+                               placeholder="e.g., AAPL,MSFT,GOOGL" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="initial_cash">Initial Cash ($):</label>
+                        <input type="number" id="initial_cash" name="initial_cash" 
+                               value="100000" min="1000" step="1000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="start_date">Start Date:</label>
+                        <input type="date" id="start_date" name="start_date">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="end_date">End Date:</label>
+                        <input type="date" id="end_date" name="end_date">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="show_reasoning" name="show_reasoning">
+                            Show detailed reasoning from agents
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Select AI Analysts:</label>
+                        <div class="checkbox-group" id="analysts-group">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <button type="submit" class="analyze-btn" id="analyze-btn">
+                        🚀 Analyze Investments
+                    </button>
+                </form>
+            </div>
+
+            <div class="results-section">
+                <h2>📈 Analysis Results</h2>
+                <div id="results-content">
+                    <p style="color: #666; text-align: center; margin-top: 50px;">
+                        Configure your analysis parameters and click "Analyze Investments" to get started.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load analysts on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAnalysts();
+            
+            // Set default end date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('end_date').value = today;
+            
+            // Set default start date to 3 months ago
+            const threeMonthsAgo = new Date();
+            threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+            document.getElementById('start_date').value = threeMonthsAgo.toISOString().split('T')[0];
+        });
+
+        async function loadAnalysts() {
+            try {
+                const response = await fetch('/api/analysts');
+                const analysts = await response.json();
+                
+                const analystsGroup = document.getElementById('analysts-group');
+                analystsGroup.innerHTML = '';
+                
+                analysts.forEach(analyst => {
+                    const div = document.createElement('div');
+                    div.className = 'checkbox-item';
+                    div.innerHTML = `
+                        <input type="checkbox" id="${analyst.value}" name="analysts" value="${analyst.value}" checked>
+                        <label for="${analyst.value}">${analyst.display}</label>
+                    `;
+                    analystsGroup.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error loading analysts:', error);
+            }
+        }
+
+        document.getElementById('analysis-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                tickers: formData.get('tickers'),
+                initial_cash: parseFloat(formData.get('initial_cash')),
+                start_date: formData.get('start_date'),
+                end_date: formData.get('end_date'),
+                show_reasoning: formData.get('show_reasoning') === 'on',
+                selected_analysts: Array.from(formData.getAll('analysts'))
+            };
+
+            // Show loading state
+            showLoading();
+            
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayResults(result);
+                } else {
+                    displayError(result.error || 'Analysis failed');
+                }
+            } catch (error) {
+                displayError('Network error: ' + error.message);
+            }
+        });
+
+        function showLoading() {
+            const btn = document.getElementById('analyze-btn');
+            btn.disabled = true;
+            btn.textContent = 'Analyzing...';
+            
+            const resultsContent = document.getElementById('results-content');
+            resultsContent.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>AI agents are analyzing your investments...</p>
+                    <p style="font-size: 0.9em; opacity: 0.7;">This may take a few moments</p>
+                </div>
+            `;
+        }
+
+        function displayResults(result) {
+            const btn = document.getElementById('analyze-btn');
+            btn.disabled = false;
+            btn.textContent = '🚀 Analyze Investments';
+            
+            const resultsContent = document.getElementById('results-content');
+            const decisions = result.result.decisions;
+            
+            if (!decisions || !decisions.decisions) {
+                displayError('No trading decisions returned');
+                return;
+            }
+
+            let html = '<div class="success">✅ Analysis completed successfully!</div>';
+            
+            decisions.decisions.forEach(decision => {
+                html += `
+                    <div class="decision-card">
+                        <h3>📊 ${decision.ticker}</h3>
+                        <div class="decision-details">
+                            <div><strong>Action:</strong> ${decision.action}</div>
+                            <div><strong>Quantity:</strong> ${decision.quantity}</div>
+                            <div><strong>Price:</strong> $${decision.price}</div>
+                            <div><strong>Confidence:</strong> ${decision.confidence}</div>
+                            <div class="full-width"><strong>Reasoning:</strong> ${decision.reasoning}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            resultsContent.innerHTML = html;
+        }
+
+        function displayError(message) {
+            const btn = document.getElementById('analyze-btn');
+            btn.disabled = false;
+            btn.textContent = '🚀 Analyze Investments';
+            
+            const resultsContent = document.getElementById('results-content');
+            resultsContent.innerHTML = `
+                <div class="error">
+                    ❌ Error: ${message}
+                </div>
+                <p style="color: #666; margin-top: 20px;">
+                    Please check your inputs and try again. Make sure you have valid API keys configured.
+                </p>
+            `;
+        }
+    </script>
+</body>
+</html>
