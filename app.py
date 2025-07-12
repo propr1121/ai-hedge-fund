@@ -183,5 +183,78 @@ def test():
         'timestamp': datetime.now().isoformat()
     })
 
+@app.route('/testpage')
+def test_page():
+    """Serve a simple test page to verify browser functionality"""
+    return '''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Hedge Fund - Test Page</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            color: white;
+            text-align: center;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        h1 { font-size: 3rem; margin-bottom: 1rem; }
+        p { font-size: 1.2rem; margin-bottom: 2rem; }
+        .status {
+            background: #10b981;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .links { margin-top: 2rem; }
+        a {
+            color: #fbbf24;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin: 0 1rem;
+        }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 AI Hedge Fund</h1>
+        <p>Web Interface Test Page</p>
+        <div class="status">✅ Server is Working!</div>
+        <div class="links">
+            <a href="/">Main Interface</a>
+            <a href="/test">API Test</a>
+        </div>
+        <p style="margin-top: 2rem; font-size: 0.9rem; opacity: 0.8;">
+            If you can see this page, your browser and server are working correctly.<br>
+            Try the Main Interface link above to access the full application.
+        </p>
+    </div>
+</body>
+</html>'''
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    print("🚀 Starting AI Hedge Fund Web Interface...")
+    print(f"🌐 Server will be available at:")
+    print(f"   - http://0.0.0.0:5000/")
+    print(f"   - http://127.0.0.1:5000/")
+    print(f"   - http://172.30.0.2:5000/")
+    print(f"🔗 Test endpoint: http://172.30.0.2:5000/test")
+    print("")
+    app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)
