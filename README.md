@@ -78,7 +78,17 @@ For any other ticker, you will need to set the `FINANCIAL_DATASETS_API_KEY` in t
 
 ## Usage
 
-### Running the Hedge Fund
+### Web Interface (Recommended)
+A modern web interface is now available at `http://172.30.0.2:5000/`
+
+To start the web server:
+```bash
+poetry run python app.py
+```
+
+Then open your browser and navigate to `http://172.30.0.2:5000/` to use the intuitive web interface.
+
+### Command Line Interface
 ```bash
 poetry run python src/main.py --ticker AAPL,MSFT,NVDA
 ```
