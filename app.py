@@ -137,4 +137,12 @@ def get_status():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    print("🚀 Starting AI Hedge Fund Dashboard...")
+    print("🌐 Server will be accessible at:")
+    print("   - Local: http://localhost:5000")
+    print("   - Network: http://0.0.0.0:5000")
+    print("   - External: http://[your-server-ip]:5000")
+    print("📊 Cryptocurrency data loading...")
+    print("🤖 AI analysis ready!")
+    print("=" * 50)
+    app.run(debug=True, host='0.0.0.0', port=5000, threaded=True)
