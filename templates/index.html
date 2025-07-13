@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Hedge Fund Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1><i class="fas fa-chart-line"></i> AI Hedge Fund Dashboard</h1>
+            <p class="subtitle">Intelligent Trading Analysis with Cryptocurrency Market Data</p>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Controls Section -->
+            <div class="controls-section">
+                <div class="control-group">
+                    <label for="tickers">Stock Tickers:</label>
+                    <input type="text" id="tickers" value="AAPL,MSFT,NVDA" placeholder="Enter tickers separated by commas">
+                </div>
+                <div class="control-group">
+                    <label for="start-date">Start Date:</label>
+                    <input type="date" id="start-date">
+                </div>
+                <div class="control-group">
+                    <label for="end-date">End Date:</label>
+                    <input type="date" id="end-date">
+                </div>
+                <div class="control-group">
+                    <label for="initial-cash">Initial Cash ($):</label>
+                    <input type="number" id="initial-cash" value="100000" min="1000">
+                </div>
+                <button id="analyze-btn" class="btn btn-primary">
+                    <i class="fas fa-play"></i> Run Analysis
+                </button>
+            </div>
+
+            <!-- Cryptocurrency Market Data -->
+            <div class="crypto-section">
+                <h2><i class="fab fa-bitcoin"></i> Top 8 Cryptocurrencies</h2>
+                <div id="crypto-grid" class="crypto-grid">
+                    <!-- Crypto cards will be populated here -->
+                </div>
+            </div>
+
+            <!-- Analysis Results -->
+            <div class="analysis-section">
+                <h2><i class="fas fa-brain"></i> AI Analysis Results</h2>
+                <div id="analysis-results">
+                    <p class="placeholder-text">Run an analysis to see AI-powered trading recommendations</p>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Running AI analysis...</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 AI Hedge Fund Dashboard. For educational purposes only.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
